@@ -1,0 +1,38 @@
+#KVM virsh command completion function
+function _virsh()
+{
+    LVIRSH=${LVIRSH:="on"}
+    [ "$LVIRSH" == "off" ] && return 0
+
+    local word=${COMP_WORDS[COMP_CWORD]}
+    local line=${COMP_LINE}
+    local comstr="attach-device\nattach-disk\nattach-interface\nautostart\nblkdeviotune\nblkiotune\nblockcommit\nblockcopy\nblockjob\nblockpull\nblockresize\nchange-media\nconsole\ncpu-baseline\ncpu-compare\ncpu-stats\ncreate\ndefine\ndesc\ndestroy\ndetach-device\ndetach-disk\ndetach-interface\ndomdisplay\ndomhostname\ndomid\ndomif-setlink\ndomiftune\ndomjobabort\ndomjobinfo\ndomname\ndompmsuspend\ndompmwakeup\ndomuuid\ndomxml-from-native\ndomxml-to-native\ndump\ndumpxml\nedit\ninject-nmi\nsend-key\nmanagedsave\nmanagedsave-remove\nmaxvcpus\nmemtune\nmigrate\nmigrate-setmaxdowntime\nmigrate-setspeed\nmigrate-getspeed\nnumatune\nreboot\nreset\nrestore\nresume\nsave\nsave-image-define\nsave-image-dumpxml\nsave-image-edit\nschedinfo\nscreenshot\nsetmaxmem\nsetmem\nsetvcpus\nshutdown\nstart\nsuspend\nttyconsole\nundefine\nupdate-device\nvcpucount\nvcpuinfo\nvcpupin\nemulatorpin\nvncdisplay\ndomblkerror\ndomblkinfo\ndomblklist\ndomblkstat\ndomcontrol\ndomif-getlink\ndomiflist\ndomifstat\ndominfo\ndommemstat\ndomstate\nlist\ncapabilities\nfreecell\nhostname\nnode-memory-tune\nnodecpustats\nnodeinfo\nnodememstats\nnodesuspend\nqemu-attach\nqemu-monitor-command\nqemu-agent-command\nsysinfo\nuri\nversion\niface-begin\niface-bridge\niface-commit\niface-define\niface-destroy\niface-dumpxml\niface-edit\niface-list\niface-mac\niface-name\niface-rollback\niface-start\niface-unbridge\niface-undefine\nnwfilter-define\nnwfilter-dumpxml\nnwfilter-edit\nnwfilter-list\nnwfilter-undefine\nnet-autostart\nnet-create\nnet-define\nnet-destroy\nnet-dumpxml\nnet-edit\nnet-info\nnet-list\nnet-name\nnet-start\nnet-undefine\nnet-update\nnet-uuid\nnodedev-create\nnodedev-destroy\nnodedev-detach\nnodedev-dumpxml\nnodedev-list\nnodedev-reattach\nnodedev-reset\nsecret-define\nsecret-dumpxml\nsecret-get-value\nsecret-list\nsecret-set-value\nsecret-undefine\nsnapshot-create\nsnapshot-create-as\nsnapshot-current\nsnapshot-delete\nsnapshot-dumpxml\nsnapshot-edit\nsnapshot-info\nsnapshot-list\nsnapshot-parent\nsnapshot-revert\nfind-storage-pool-sources-as\nfind-storage-pool-sources\npool-autostart\npool-build\npool-create-as\npool-create\npool-define-as\npool-define\npool-delete\npool-destroy\npool-dumpxml\npool-edit\npool-info\npool-list\npool-name\npool-refresh\npool-start\npool-undefine\npool-uuid\nvol-clone\nvol-create-as\nvol-create\nvol-create-from\nvol-delete\nvol-download\nvol-dumpxml\nvol-info\nvol-key\nvol-list\nvol-name\nvol-path\nvol-pool\nvol-resize\nvol-upload\nvol-wipe"
+    local Wordlist
+    local Wordlist1
+    local Wordlist2
+	rm -f a1 a2 a3
+    case "$line" in
+        *create*|*" "define*|*pool-define" "*)
+            COMPREPLY=($(compgen -f -X "!*.xml" -- "${word}"))
+            ;;
+        *console*|*" "destroy*|*reboot*|*shutdown*|*domid*|*migrate" "*|*save*|*edit*|*start*|*dumpxml*|*"dump "|*snapshot-list*|*domstate*|*" "undefine*|*migrate-setspeed*|*migrate-getspeed*|*migrate-setmaxdowntime*)
+            Wordlist2=$(virsh list|sed '1,2d'|awk '{print $2}'|sed '/^$/d')
+            COMPREPLY=($(compgen -W "$Wordlist2" -- "${word}"))
+            ;;
+	*pool-build*|*pool-undefine*|*pool-destroy*|*pool-info*)
+	    Wordlist2=$(virsh pool-list --inactive|sed '1,2d'|awk '{print $1}'|sed '/^$/d')
+            COMPREPLY=($(compgen -W "$Wordlist2" -- "${word}"))
+            ;;
+        *pool-start*|*pool-autostart*|*pool-info*|*pool-destroy*|*vol-create" "*|*vol-dumpxml*)
+            Wordlist2=$(virsh pool-list --all|sed '1,2d'|awk '{print $1}'|sed '/^$/d')
+            COMPREPLY=($(compgen -W "$Wordlist2" -- "${word}"))
+            ;;
+        *)
+            Wordlist=$(echo -e "$comstr")
+            COMPREPLY=($(compgen -W "$Wordlist" -- "${word}"))
+            ;;
+    esac
+}
+
+#install profile have to include this
+complete -o default -F _virsh virsh
