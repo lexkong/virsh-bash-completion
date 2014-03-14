@@ -1,3 +1,4 @@
+#Reference: http://www.linuxjournal.com/content/more-using-bash-complete-command
 #KVM virsh command completion function
 function _virsh()
 {
@@ -15,7 +16,7 @@ function _virsh()
         *create*|*" "define*|*pool-define" "*)
             COMPREPLY=($(compgen -f -X "!*.xml" -- "${word}"))
             ;;
-        *console*|*" "destroy*|*reboot*|*shutdown*|*domid*|*migrate" "*|*save*|*edit*|*start*|*dumpxml*|*"dump "|*snapshot-list*|*domstate*|*" "undefine*|*migrate-setspeed*|*migrate-getspeed*|*migrate-setmaxdowntime*)
+        *console*|*" "destroy*|*reboot*|*shutdown*|*domid*|*migrate" "*|*save*|*edit*|*" "start*|*dumpxml*|*"dump "|*snapshot-list*|*domstate*|*" "undefine*|*migrate-setspeed*|*migrate-getspeed*|*migrate-setmaxdowntime*)
             Wordlist2=$(virsh list|sed '1,2d'|awk '{print $2}'|sed '/^$/d')
             COMPREPLY=($(compgen -W "$Wordlist2" -- "${word}"))
             ;;
