@@ -1,7 +1,1 @@
-This is a libvirt virsh command completion script. You can append it to your .bashrc or profile, etc.
-to make it effect.
-
-
-If you prefer to use libvirt's original virsh command, just type: export LVIRSH=off on your bash.
-
-Feel free to make a contribution to it.
+This is a libvirt virsh command completion script.
